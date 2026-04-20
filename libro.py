@@ -25,15 +25,15 @@ class Libro:
         self._lector_dni = None
 
 
-    def prestar(self, dni_lector: str, dias: int) -> str:
-        """Presta el libro. Pre: estado=DISPONIBLE, dias in [1,30]."""
-        if self._estado != EstadoMaterial.DISPONIBLE:
-            raise PermissionError('El libro no está disponible')
-        if dias < 1 or dias > 30:     # BUG: debería ser dias > 30
-            raise ValueError('Días fuera de rango')
-        self._estado     = EstadoMaterial.PRESTADO
-        self._lector_dni = dni_lector
-        return f'Préstamo OK — vence en {dias} días'
+ def prestar(self, dni, dias):
+    if dias < 1 or dias > 30:
+        raise ValueError("Días inválidos")
+
+    if self._estado != EstadoMaterial.DISPONIBLE:
+        raise PermissionError("No disponible")
+
+    self._estado = EstadoMaterial.PRESTADO
+    self._lector = dni
 
 
 def devolver(self):
