@@ -1,4 +1,3 @@
-# biblioteca/libro.py
 from enum import Enum
 
 
@@ -16,6 +15,7 @@ class Libro:
             raise ValueError('ISBN inválido')
         if num_paginas <= 0:
             raise ValueError('num_paginas debe ser positivo')
+
         self._isbn       = isbn
         self._titulo     = titulo
         self._autor      = autor
@@ -24,43 +24,38 @@ class Libro:
         self._estado     = EstadoMaterial.DISPONIBLE
         self._lector_dni = None
 
+    def prestar(self, dni, dias):
+        if dias < 1 or dias > 30:
+            raise ValueError("Días inválidos")
 
- def prestar(self, dni, dias):
-    if dias < 1 or dias > 30:
-        raise ValueError("Días inválidos")
+        if self._estado != EstadoMaterial.DISPONIBLE:
+            raise PermissionError("No disponible")
 
-    if self._estado != EstadoMaterial.DISPONIBLE:
-        raise PermissionError("No disponible")
+        self._estado = EstadoMaterial.PRESTADO
+        self._lector_dni = dni
 
-    self._estado = EstadoMaterial.PRESTADO
-    self._lector = dni
+    def devolver(self):
+        if self._estado != EstadoMaterial.PRESTADO:
+            raise PermissionError("No se puede devolver si no está prestado")
 
-
-def devolver(self):
-    if self._estado != EstadoMaterial.PRESTADO:
-        raise PermissionError("No se puede devolver si no está prestado")
-
-    self._estado = EstadoMaterial.DISPONIBLE
-    self._lector = None
-
+        self._estado = EstadoMaterial.DISPONIBLE
+        self._lector_dni = None
 
     def reservar(self, dni_lector: str) -> None:
-        """Reserva el libro. Pre: estado=DISPONIBLE."""
         if self._estado != EstadoMaterial.DISPONIBLE:
             raise PermissionError('No se puede reservar')
+
         self._estado     = EstadoMaterial.RESERVADO
         self._lector_dni = dni_lector
-
 
     def dar_de_baja(self) -> None:
         if self._estado == EstadoMaterial.PRESTADO:
             raise PermissionError('No se puede dar de baja un libro prestado')
-        self._estado = EstadoMaterial.BAJA
 
+        self._estado = EstadoMaterial.BAJA
 
     def get_estado(self) -> EstadoMaterial:
         return self._estado
-
 
     def get_lector(self) -> str:
         return self._lector_dni
