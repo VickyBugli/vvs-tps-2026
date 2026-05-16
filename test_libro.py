@@ -1,5 +1,5 @@
 import pytest
-from libro import Libro, EstadoMaterial
+from biblioteca.libro import Libro, EstadoMaterial
 
 
 @pytest.fixture(scope="function")
@@ -140,3 +140,8 @@ def test_reservar_estado_invalido(libro_valido):
 
     with pytest.raises(PermissionError):
         libro_valido.reservar("123")
+
+# --------------- CAMBIO C AÑO
+def test_anio_invalido():
+    with pytest.raises(ValueError):
+        Libro(isbn='9781234567890', titulo='X', autor='Y', anio=1899, num_paginas=100)

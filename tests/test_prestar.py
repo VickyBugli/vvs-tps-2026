@@ -47,7 +47,7 @@ def test_prestar_exitoso_mock():
     mock.enviar.assert_called_once_with(
         destinatario='12345678',
         asunto='Préstamo confirmado',
-        detalle=mock.enviar.call_args.kwargs['detalle']  # guarda lo del campo detalle
+        detalle='Préstamo de 9781234567890 a 12345678 por 7 días'
     )
 
 def test_prestar_isbn_inexistente():
@@ -121,3 +121,31 @@ def test_prestar_libro_ya_prestado_mock():
 
     # nunca se llamó a enviar() 
     mock.enviar.assert_not_called()
+
+# -------------------------------------------------------
+#            pruebas de fallo del notificador 
+# -------------------------------------------------------
+
+def test_fallo_notificador_mantiene_prestamo():
+    # arrange ----
+    mock = MagicMock()
+    mock.enviar.side_effect = ConnectionError("Sin conexión")
+
+    gestor = GestorBiblioteca(notificador=mock)
+    libro = Libro(
+        isbn='9781234567890',
+        titulo='Tinker Bell',
+        autor='Disney',
+        anio=1949,
+        num_paginas=300
+    )
+    gestor.registrar(libro)
+
+    # act ----
+    # El préstamo se intenta aunque el notificador falle
+    gestor.prestar('9781234567890', '12345678', 7)
+
+    # asset ----
+    # El libro debe seguir prestado, no revertido
+    assert libro.get_estado() == EstadoMaterial.PRESTADO
+

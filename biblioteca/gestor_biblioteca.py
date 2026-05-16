@@ -15,10 +15,18 @@ class GestorBiblioteca:
         if isbn not in self._catalogos:
             raise KeyError('Libro no encontrado')
         resultado = self._catalogos[isbn].prestar(dni, dias)
-        self._notificador.enviar(
-            destinatario=dni,
-            asunto='Préstamo confirmado',
-            detalle=resultado)
+
+        try:
+            # Agregamos un try para capturar el error de conexion y que continue sin problema
+            self._notificador.enviar(
+                destinatario=dni,
+                asunto='Préstamo confirmado',
+                detalle=resultado)
+
+        except ConnectionError:
+            # ignora el error
+           pass
+
         return resultado
 
 

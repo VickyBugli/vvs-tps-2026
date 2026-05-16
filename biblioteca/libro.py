@@ -15,6 +15,8 @@ class Libro:
             raise ValueError('ISBN inválido')
         if num_paginas <= 0:
             raise ValueError('num_paginas debe ser positivo')
+        if(anio<=1900):
+            raise ValueError('El año debe ser posterior a 1900') # CAMBIO C
 
         self._isbn       = isbn
         self._titulo     = titulo
@@ -25,7 +27,7 @@ class Libro:
         self._lector_dni = None
 
     def prestar(self, dni, dias):
-        if dias < 1 or dias > 30:
+        if dias < 1 or dias > 21: #CAMBIO A
             raise ValueError("Días inválidos")
 
         if self._estado != EstadoMaterial.DISPONIBLE:
@@ -33,6 +35,8 @@ class Libro:
 
         self._estado = EstadoMaterial.PRESTADO
         self._lector_dni = dni
+
+        return f'Préstamo de {self._isbn} a {dni} por {dias} días'
 
     def devolver(self):
         if self._estado != EstadoMaterial.PRESTADO:
@@ -59,3 +63,6 @@ class Libro:
 
     def get_lector(self) -> str:
         return self._lector_dni
+    
+    def get_isbn(self)  -> str:
+        return self._isbn
